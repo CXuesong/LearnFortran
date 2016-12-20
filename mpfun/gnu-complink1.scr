@@ -1,2 +1,3 @@
-gfortran -O3 -o $1 $1.f90 mpmodule.o mpfuna.o mpfunbq.o mpfunc.o \
-  mpfund.o mpfune.o mpfunf.o mpfungq1.o second.o
+BASE=$(dirname "$0")
+gfortran -O3 -I"$BASE" -o $1 $1.f90 $BASE/mpmodule.o $BASE/mpfuna.o $BASE/mpfunbq.o $BASE/mpfunc.o \
+  $BASE/mpfund.o $BASE/mpfune.o $BASE/mpfunf.o $BASE/mpfungq1.o $BASE/second.o
