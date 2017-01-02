@@ -40,23 +40,52 @@ program test
     use PI
 
     implicit none
+    real, parameter     :: PIC = 4*atan(1d0)
+    real, parameter     :: EVAL_MAX = 2*PIC
+    integer, parameter  :: EVAL_SEGMENTS = 200
 
     call evalSine()
+    call compareSine()
 
     contains
 
     subroutine evalSine()
-        real, parameter :: PIC = 4*atan(1d0)
         integer         :: i
+        real            :: x
+
+10      format(F16.9, F16.9)
 
         open(unit=10, file="sinx_Taylor_5.txt", status="replace")
         open(unit=11, file="sinx_Taylor_10.txt", status="replace")
-        do i = 0, 200
-            write (10, "(F16.9)"), sint(5, PIC/200*i)
-            write (11, "(F16.9)"), sint(10, PIC/200*i)
+        do i = 0, EVAL_SEGMENTS
+            x = EVAL_MAX/EVAL_SEGMENTS*i
+            write (10, 10), x, sint(5, x)
+            write (11, 10), x, sint(10, x)
         end do
         close(10)
         close(11)
+    end subroutine
+
+    subroutine compareSine()
+        integer         :: i
+        real, dimension(EVAL_SEGMENTS + 1) :: x, y5, y10
+        real            :: dummy
+
+        open(unit=10, file="sinx_Taylor_5.txt", status="old")
+        open(unit=11, file="sinx_Taylor_10.txt", status="old")
+        do i = 1, EVAL_SEGMENTS + 1
+            read (10, *), x(i), y5(i)
+            read (11, *), dummy, y10(i)
+        end do
+        close(10)
+        close(11)
+
+        open(unit=12, file="sinx_Taylor_5_10_error.txt", status="replace")
+        do i = 1, EVAL_SEGMENTS + 1
+            write (12, "(F12.6, F12.6)"), x(i), y10(i) - y5(i)
+        end do
+        close(12)
+
     end subroutine
 
 end program
