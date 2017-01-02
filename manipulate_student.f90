@@ -13,8 +13,6 @@ program manipulate_student
     type(record), dimension(STUDENT_COUNT) :: records
     integer :: i
 
-10  format(I10, F8.2)
-
     ! read the records
     open(unit=10, file="students.txt", status="old")
     do i = 1, STUDENT_COUNT
